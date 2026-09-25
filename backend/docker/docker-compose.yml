@@ -1,0 +1,16 @@
+version: "3.9"
+
+services:
+  # Build-only service — not run directly in production.
+  # Use this to build and tag the sandbox base image locally.
+  #
+  # Usage:
+  #   docker compose -f backend/docker/docker-compose.yml build sandbox-base
+  #
+  sandbox-base:
+    build:
+      context: ../..
+      dockerfile: backend/docker/sandbox.Dockerfile
+    image: qa-sandbox-base:latest
+    # No ports / volumes — this is purely a build target.
+    # Containers are started programmatically by docker_manager.py at scan time.

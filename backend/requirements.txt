@@ -1,0 +1,11 @@
+# Backend dependencies
+# Versions reflect what is installed in the .venv — keep in sync.
+
+fastapi==0.141.1
+uvicorn[standard]==0.54.0
+python-multipart==0.0.32
+pydantic-settings==2.15.0
+docker==7.2.0
+playwright==1.63.0
+openai==3.19.2            # GPT-4o fallback for vision analysis
+httpx==0.28.1             # readiness-check HTTP calls inside docker_manager

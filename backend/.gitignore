@@ -1,0 +1,9 @@
+.env
+uploads/
+sandbox-runs/
+__pycache__/
+*.pyc
+*.pyo
+.pytest_cache/
+.venv/
+venv/
