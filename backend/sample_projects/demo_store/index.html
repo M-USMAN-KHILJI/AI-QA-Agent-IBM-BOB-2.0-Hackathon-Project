@@ -1,0 +1,70 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>E-Commerce Demo Store</title>
+  <style>
+    body { font-family: sans-serif; background: #0f172a; color: #f8fafc; padding: 2rem; margin: 0; }
+    .header { display: flex; justify-content: space-between; align-items: center; border-bottom: 1px solid #334155; padding-bottom: 1rem; }
+    .card-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(240px, 1fr)); gap: 1.5rem; margin-top: 2rem; }
+    .card { background: #1e293b; padding: 1.5rem; border-radius: 0.75rem; border: 1px solid #334155; }
+    .btn { background: #3b82f6; color: white; padding: 0.6rem 1.2rem; border: none; border-radius: 0.5rem; cursor: pointer; font-weight: bold; margin-top: 1rem; }
+    .btn-danger { background: #ef4444; }
+    .broken-overlay { position: relative; z-index: 999; margin-top: -20px; }
+  </style>
+</head>
+<body>
+  <div class="header">
+    <h1>Acme Tech Store</h1>
+    <div><a href="/cart" style="color: #60a5fa;">Cart (<span id="cart-count">0</span>)</a></div>
+  </div>
+
+  <p>Welcome to Acme Tech Store. Browse products and test our checkout flow.</p>
+
+  <div class="card-grid">
+    <div class="card">
+      <h3>Quantum Developer Keyboard</h3>
+      <p>$189.00</p>
+      <button class="btn" onclick="addToCart('Keyboard')">Add to Cart</button>
+    </div>
+    <div class="card broken-overlay">
+      <h3>AI Inference Accelerator GPU</h3>
+      <p>$999.00</p>
+      <button class="btn" onclick="addToCart('GPU')">Add to Cart</button>
+    </div>
+    <div class="card">
+      <h3>Checkout Testing</h3>
+      <p>Click below to test payment transaction.</p>
+      <button class="btn btn-danger" id="checkout-btn" onclick="triggerCheckout()">Pay & Complete Order</button>
+    </div>
+  </div>
+
+  <div id="checkout-status" style="margin-top: 1.5rem; color: #f87171;"></div>
+
+  <script>
+    console.log("Acme Store Initialized. Session Token: eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9...");
+    let count = 0;
+    function addToCart(item) {
+      count++;
+      document.getElementById('cart-count').innerText = count;
+      alert(item + ' added to cart!');
+    }
+
+    function triggerCheckout() {
+      document.getElementById('checkout-status').innerText = "Processing order...";
+      fetch('/api/charge', { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ amount: 999 }) })
+        .then(res => {
+          if (!res.ok) throw new Error("Payment server returned HTTP " + res.status);
+          return res.json();
+        })
+        .then(data => {
+          document.getElementById('checkout-status').innerText = "Success!";
+        })
+        .catch(err => {
+          console.error("Unhandled Checkout Exception:", err);
+          document.getElementById('checkout-status').innerText = "Checkout Failed: " + err.message;
+        });
+    }
+  </script>
+</body>
+</html>

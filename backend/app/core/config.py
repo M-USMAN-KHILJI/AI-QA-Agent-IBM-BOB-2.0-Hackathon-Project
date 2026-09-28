@@ -1,28 +1,28 @@
 """
 config.py — Application-wide settings loaded from environment variables / .env
-
-Settings:
-  UPLOAD_DIR          Directory where incoming zip files are stored temporarily.
-  SANDBOX_RUNS_DIR    Directory where per-run evidence and reports are stored.
-  MAX_ZIP_BYTES       Maximum allowed compressed zip size (default 200 MB).
-  CONTAINER_IMAGE     Docker image name for the sandbox (qa-sandbox-base:latest).
-  BOB_API_KEY         IBM Bob vision LLM API key.
-  OPENAI_API_KEY      OpenAI GPT-4o fallback API key.
 """
+from pathlib import Path
 from pydantic_settings import BaseSettings
 
 
 class Settings(BaseSettings):
+    BASE_DIR: Path = Path(__file__).resolve().parent.parent.parent
     UPLOAD_DIR: str = "uploads"
     SANDBOX_RUNS_DIR: str = "sandbox-runs"
-    MAX_ZIP_BYTES: int = 200 * 1024 * 1024  # 200 MB
+    MAX_ZIP_BYTES: int = 50 * 1024 * 1024        # 50 MB compressed cap
+    MAX_UNCOMPRESSED_BYTES: int = 200 * 1024 * 1024  # 200 MB uncompressed cap
     CONTAINER_IMAGE: str = "qa-sandbox-base:latest"
+
+    # OpenAI-compatible Vision / LLM API configuration (NVIDIA / OpenAI)
+    OPENAI_BASE_URL: str = "https://integrate.api.nvidia.com/v1"
+    OPENAI_API_KEY: str = "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"
+    OPENAI_MODEL: str = "openai/gpt-oss-20b"
     BOB_API_KEY: str = ""
-    OPENAI_API_KEY: str = ""
 
     class Config:
         env_file = ".env"
         env_file_encoding = "utf-8"
+        extra = "ignore"
 
 
 settings = Settings()

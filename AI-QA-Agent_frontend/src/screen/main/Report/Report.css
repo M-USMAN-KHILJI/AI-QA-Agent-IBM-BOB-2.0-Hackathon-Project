@@ -1,0 +1,89 @@
+/* AI-QA-Agent QA Audit Report Stylesheet */
+
+.report-canvas {
+  background-color: #090a0f;
+  background-image: 
+    radial-gradient(circle at 10% 20%, rgba(59, 130, 246, 0.08) 0%, transparent 40%),
+    radial-gradient(circle at 90% 80%, rgba(244, 63, 94, 0.06) 0%, transparent 40%),
+    linear-gradient(rgba(255, 255, 255, 0.02) 1px, transparent 1px),
+    linear-gradient(90deg, rgba(255, 255, 255, 0.02) 1px, transparent 1px);
+  background-size: 100% 100%, 100% 100%, 32px 32px, 32px 32px;
+  min-height: 100vh;
+}
+
+/* Glassmorphic Report Cards */
+.report-card {
+  background: rgba(19, 24, 38, 0.8);
+  backdrop-filter: blur(16px);
+  -webkit-backdrop-filter: blur(16px);
+  border: 1px solid rgba(255, 255, 255, 0.08);
+  box-shadow: 0 10px 30px -10px rgba(0, 0, 0, 0.5), inset 0 1px 0 rgba(255, 255, 255, 0.06);
+  transition: all 0.25s cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+.report-card:hover {
+  border-color: rgba(59, 130, 246, 0.3);
+  box-shadow: 0 16px 40px -12px rgba(0, 0, 0, 0.6), 0 0 20px rgba(59, 130, 246, 0.1);
+}
+
+.report-card-critical {
+  border-left: 4px solid #f43f5e !important;
+}
+
+.report-card-high {
+  border-left: 4px solid #fb923c !important;
+}
+
+.report-card-medium {
+  border-left: 4px solid #facc15 !important;
+}
+
+.report-card-low {
+  border-left: 4px solid #38bdf8 !important;
+}
+
+/* Severity Donut Chart Animations */
+.donut-segment {
+  transition: stroke-width 0.2s ease, stroke 0.2s ease;
+  cursor: pointer;
+}
+
+.donut-segment:hover {
+  stroke-width: 18;
+  filter: drop-shadow(0 0 8px currentColor);
+}
+
+/* Screenshot Lightbox Modal */
+.lightbox-overlay {
+  position: fixed;
+  inset: 0;
+  z-index: 100;
+  background-color: rgba(5, 7, 13, 0.88);
+  backdrop-filter: blur(12px);
+  -webkit-backdrop-filter: blur(12px);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 1.5rem;
+  animation: fadeIn 0.2s ease-out;
+}
+
+@keyframes fadeIn {
+  from { opacity: 0; transform: scale(0.98); }
+  to { opacity: 1; transform: scale(1); }
+}
+
+/* Evidence Terminal / Code blocks */
+.evidence-terminal {
+  background: #080b12;
+  border: 1px solid rgba(255, 255, 255, 0.08);
+  border-radius: 0.75rem;
+  font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, monospace;
+}
+
+/* Tab active state */
+.tab-active {
+  color: #60a5fa !important;
+  border-bottom: 2px solid #3b82f6 !important;
+  background: rgba(59, 130, 246, 0.08);
+}

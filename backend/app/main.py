@@ -1,49 +1,49 @@
 """
 main.py — FastAPI application entry point.
-
-Responsibilities:
-- Create the FastAPI app instance.
-- Register CORSMiddleware (must come before any routes).
-- Mount all API routers (upload, scan, reports).
-- Expose GET /health.
-- Run a stale-container cleanup sweep on startup (via lifespan).
 """
 from contextlib import asynccontextmanager
-
 from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
 
 from app.api import upload, scan, reports
+from app.core.docker_manager import _sweep_stale_containers
 
 
 @asynccontextmanager
 async def lifespan(app: FastAPI):
-    # Startup: remove any sandbox containers left over from a previous crash.
-    # TODO: uncomment once docker_manager is implemented:
-    # from app.core.docker_manager import _sweep_stale_containers
-    # _sweep_stale_containers()
+    # Startup: remove any sandbox containers left over from a previous run
+    _sweep_stale_containers()
     yield
-    # Shutdown: nothing needed for MVP.
+    # Shutdown: clean up on server close
+    _sweep_stale_containers()
 
 
-app = FastAPI(title="QA Agent API", version="0.1.0", lifespan=lifespan)
+app = FastAPI(
+    title="AI QA Agent API",
+    version="1.0.0",
+    description="Autonomous sandbox testing engine for React & FastAPI applications",
+    lifespan=lifespan,
+)
 
-# ── CORS — must be registered before any route is reached ───────────────────
+# ── CORS Middleware ──────────────────────────────────────────────────────────
 app.add_middleware(
     CORSMiddleware,
-    allow_origins=["http://localhost:5173"],
+    allow_origins=["*"],
     allow_credentials=True,
     allow_methods=["*"],
     allow_headers=["*"],
 )
 
-# ── Routers ──────────────────────────────────────────────────────────────────
+# ── Mount Routers with and without /api prefix for maximum compatibility ─────
 app.include_router(upload.router,  prefix="/api")
 app.include_router(scan.router,    prefix="/api")
 app.include_router(reports.router, prefix="/api")
 
+app.include_router(upload.router)
+app.include_router(scan.router)
+app.include_router(reports.router)
 
-# ── Health ────────────────────────────────────────────────────────────────────
+
 @app.get("/health")
 def health():
-    return {"status": "ok"}
+    return {"status": "ok", "service": "AI QA Agent Backend", "version": "1.0.0"}
