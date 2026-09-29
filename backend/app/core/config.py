@@ -14,9 +14,9 @@ class Settings(BaseSettings):
     CONTAINER_IMAGE: str = "qa-sandbox-base:latest"
 
     # OpenAI-compatible Vision / LLM API configuration (NVIDIA / OpenAI)
-    OPENAI_BASE_URL: str = "https://integrate.api.nvidia.com/v1"
-    OPENAI_API_KEY: str = "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"
-    OPENAI_MODEL: str = "openai/gpt-oss-20b"
+    OPENAI_BASE_URL: str = "OPENAI-BASE-URL"
+    OPENAI_API_KEY: str = "OPENAI-API-KEY"
+    OPENAI_MODEL: str = "MODEL"
     BOB_API_KEY: str = ""
 
     class Config:
