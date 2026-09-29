@@ -14,7 +14,7 @@ class Settings(BaseSettings):
     CONTAINER_IMAGE: str = "qa-sandbox-base:latest"
 
     # PostgreSQL Database Connection (aidb with psycopg2 dialect)
-    DATABASE_URL: str = "postgresql+psycopg2://postgres:901a8520@localhost:5432/aidb"
+    DATABASE_URL: str = "YOUR DB"
 
     # JWT Authentication Settings
     JWT_SECRET_KEY: str = "ai-qa-agent-bob2-secret-key-super-secure-2026"
