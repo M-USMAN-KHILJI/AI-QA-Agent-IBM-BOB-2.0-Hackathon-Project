@@ -1,17 +1,19 @@
-"""
+﻿"""
 main.py — FastAPI application entry point.
 """
 from contextlib import asynccontextmanager
 from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
 
-from app.api import upload, scan, reports
+from app.api import upload, scan, reports, auth
+from app.core.database import init_db
 from app.core.docker_manager import _sweep_stale_containers
 
 
 @asynccontextmanager
 async def lifespan(app: FastAPI):
-    # Startup: remove any sandbox containers left over from a previous run
+    # Startup: Initialize PostgreSQL database tables & cleanup stale sandboxes
+    init_db()
     _sweep_stale_containers()
     yield
     # Shutdown: clean up on server close
@@ -35,10 +37,12 @@ app.add_middleware(
 )
 
 # ── Mount Routers with and without /api prefix for maximum compatibility ─────
+app.include_router(auth.router,    prefix="/api")
 app.include_router(upload.router,  prefix="/api")
 app.include_router(scan.router,    prefix="/api")
 app.include_router(reports.router, prefix="/api")
 
+app.include_router(auth.router)
 app.include_router(upload.router)
 app.include_router(scan.router)
 app.include_router(reports.router)

@@ -1,10 +1,12 @@
-import React, { useState, useRef } from 'react';
+﻿import React, { useState, useRef } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { COLORS, FONT_SIZES, FONT_WEIGHTS } from '../Const/Display';
+import { useAuth } from '../Context/AuthContext';
 
 export const UploadCard = ({ onStartScan }) => {
   const navigate = useNavigate();
   const fileInputRef = useRef(null);
+  const { isAuthenticated, user } = useAuth();
 
   const [selectedFile, setSelectedFile] = useState(null);
   const [projectDescription, setProjectDescription] = useState('');
@@ -33,6 +35,20 @@ export const UploadCard = ({ onStartScan }) => {
     setSelectedFile(file);
   };
 
+  // Intercept click to browse if user is not logged in
+  const handleBrowseClick = () => {
+    if (!isAuthenticated) {
+      navigate('/login', {
+        state: {
+          from: 'upload',
+          message: 'Please sign in to your account before uploading and testing your project code.',
+        },
+      });
+      return;
+    }
+    fileInputRef.current?.click();
+  };
+
   const handleDragOver = (e) => {
     e.preventDefault();
     setIsDragging(true);
@@ -45,6 +61,18 @@ export const UploadCard = ({ onStartScan }) => {
   const handleDrop = (e) => {
     e.preventDefault();
     setIsDragging(false);
+
+    // If not authenticated, redirect to login
+    if (!isAuthenticated) {
+      navigate('/login', {
+        state: {
+          from: 'upload',
+          message: 'Please sign in to your account before uploading and testing your project code.',
+        },
+      });
+      return;
+    }
+
     if (e.dataTransfer.files && e.dataTransfer.files[0]) {
       handleFile(e.dataTransfer.files[0]);
     }
@@ -68,6 +96,17 @@ export const UploadCard = ({ onStartScan }) => {
       return;
     }
 
+    // Auth gate for uploaded custom files
+    if (!isAuthenticated && !selectedFile.isSample) {
+      navigate('/login', {
+        state: {
+          from: 'upload',
+          message: 'Please sign in to run autonomous test scans on your project.',
+        },
+      });
+      return;
+    }
+
     setIsSubmitting(true);
     setErrorMsg('');
 
@@ -80,7 +119,6 @@ export const UploadCard = ({ onStartScan }) => {
           isSample: selectedFile.isSample || false,
         });
       } else {
-        // Mock fallback run ID for immediate frontend simulation
         const mockRunId = 'scan-' + Math.random().toString(36).substring(2, 9);
         navigate(`/scan/${mockRunId}`);
       }
@@ -123,12 +161,12 @@ export const UploadCard = ({ onStartScan }) => {
       </div>
 
       <form onSubmit={handleSubmit} className="mt-6 space-y-6">
-        {/* Dropzone */}
+        {/* Dropzone with Auth Protection */}
         <div
           onDragOver={handleDragOver}
           onDragLeave={handleDragLeave}
           onDrop={handleDrop}
-          onClick={() => fileInputRef.current?.click()}
+          onClick={handleBrowseClick}
           className={`border-2 border-dashed rounded-xl p-8 text-center cursor-pointer transition-all duration-200 ${
             isDragging
               ? 'dropzone-active'
@@ -157,7 +195,7 @@ export const UploadCard = ({ onStartScan }) => {
                   <p className="text-sm font-semibold text-white flex items-center gap-2">
                     {selectedFile.name}
                     {selectedFile.isSample && (
-                      <span className="text-[10px] bg-purple-500/20 text-purple-300 border border-purple-500/40 px-1.5 py-0.5 rounded">
+                      <span className="text-[10px] bg-purple-500/20 text-purple-300 border border-purple-500/40 px-1.5 py-0.5 rounded font-mono">
                         Demo Project
                       </span>
                     )}
@@ -172,7 +210,7 @@ export const UploadCard = ({ onStartScan }) => {
                     e.stopPropagation();
                     setSelectedFile(null);
                   }}
-                  className="p-1 rounded-lg text-slate-500 hover:text-slate-300 hover:bg-slate-800 transition ml-2"
+                  className="p-1 rounded-lg text-slate-500 hover:text-slate-300 hover:bg-slate-800 transition ml-2 cursor-pointer"
                 >
                   <svg className="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                     <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M6 18L18 6M6 6l12 12" />
@@ -188,11 +226,19 @@ export const UploadCard = ({ onStartScan }) => {
                 </div>
                 <div>
                   <p className="text-sm font-medium text-slate-200">
-                    <span className="text-blue-400 font-semibold hover:underline">Click to browse</span> or drag and drop your project .zip
+                    <span className="text-blue-400 font-semibold hover:underline">
+                      Click to browse
+                    </span>{' '}
+                    or drag and drop your project .zip
                   </p>
                   <p className="text-xs text-slate-400 mt-1">
                     Must contain React frontend and/or FastAPI backend (Max 50MB compressed)
                   </p>
+                  {!isAuthenticated && (
+                    <p className="text-[11px] font-mono text-purple-400/90 mt-2 bg-purple-500/10 py-0.5 px-2.5 rounded-full inline-block border border-purple-500/20">
+                      🔒 Authentication required to upload • Click to Sign In
+                    </p>
+                  )}
                 </div>
               </>
             )}
@@ -221,7 +267,7 @@ export const UploadCard = ({ onStartScan }) => {
           <button
             type="button"
             onClick={() => setShowAuthFields(!showAuthFields)}
-            className="w-full px-4 py-3 text-left flex items-center justify-between text-xs font-medium text-slate-300 hover:text-white hover:bg-slate-900/40 transition"
+            className="w-full px-4 py-3 text-left flex items-center justify-between text-xs font-medium text-slate-300 hover:text-white hover:bg-slate-900/40 transition cursor-pointer"
           >
             <div className="flex items-center gap-2">
               <svg className="w-4 h-4 text-slate-400" fill="none" viewBox="0 0 24 24" stroke="currentColor">

@@ -1,4 +1,4 @@
-"""
+﻿"""
 config.py — Application-wide settings loaded from environment variables / .env
 """
 from pathlib import Path
@@ -12,6 +12,14 @@ class Settings(BaseSettings):
     MAX_ZIP_BYTES: int = 50 * 1024 * 1024        # 50 MB compressed cap
     MAX_UNCOMPRESSED_BYTES: int = 200 * 1024 * 1024  # 200 MB uncompressed cap
     CONTAINER_IMAGE: str = "qa-sandbox-base:latest"
+
+    # PostgreSQL Database Connection (aidb with psycopg2 dialect)
+    DATABASE_URL: str = "postgresql+psycopg2://postgres:901a8520@localhost:5432/aidb"
+
+    # JWT Authentication Settings
+    JWT_SECRET_KEY: str = "ai-qa-agent-bob2-secret-key-super-secure-2026"
+    JWT_ALGORITHM: str = "HS256"
+    ACCESS_TOKEN_EXPIRE_MINUTES: int = 60 * 24 * 7  # 7 days
 
     # OpenAI-compatible Vision / LLM API configuration (NVIDIA / OpenAI)
     OPENAI_BASE_URL: str = "https://integrate.api.nvidia.com/v1"
